@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "Bootstrap",
+    name: "bootstrap",
     platforms: [
         .macOS(.v13)
     ],
@@ -15,11 +15,14 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "Bootstrap", 
+            name: "Bootstrap",
             dependencies: [
                 .product(name: "Leaf", package: "leaf"),
                 .product(name: "Vapor", package: "vapor")
             ]),
-        .testTarget(name: "BootstrapTests", dependencies: ["Bootstrap"])
+        .testTarget(
+            name: "BootstrapTests",
+            dependencies: [.target(name: "Bootstrap")]
+        )
     ]
 )
