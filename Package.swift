@@ -22,7 +22,10 @@ let package = Package(
             ]),
         .testTarget(
             name: "BootstrapTests",
-            dependencies: [.target(name: "Bootstrap")]
+            dependencies: [
+                .target(name: "Bootstrap"),
+                .product(name: "XCTVapor", package: "vapor")
+            ]
         )
     ]
 )

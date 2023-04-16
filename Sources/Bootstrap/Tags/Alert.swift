@@ -1,6 +1,7 @@
 import Leaf
 
 /// Bootstrap Alert Tag
+/// See https://getbootstrap.com/docs/5.2/components/alerts/
 public struct AlertTag: UnsafeUnescapedLeafTag {
     public init() { }
     
@@ -20,6 +21,7 @@ public struct AlertTag: UnsafeUnescapedLeafTag {
             }
         }
         
+        // If none is provided, `primary` is chosen
         guard let parsedStyle = ColorKeys(rawValue: style) else {
             throw "Bootstrap: wrong style argument given: \(style)"
         }
@@ -48,13 +50,19 @@ public struct AlertTag: UnsafeUnescapedLeafTag {
         
         let body = try ctx.getRawTagBody()
         
-        // Build and return the newly created alrrt
+        // Build and return the newly created alert
         var alert = "<div class=\"alert alert-\(parsedStyle)"
         if let classes {
             alert += " \(classes)"
         }
         
-        alert += "\" \(attributes ?? "") role='alert'>\(body)</div>"
+        alert += "\""
+        
+        if let attributes {
+            alert += " \(attributes)"
+        }
+        
+        alert += " role=\"alert\">\(body)</div>"
         
         return .string(alert)
     }
