@@ -1,18 +1,25 @@
-// swift-tools-version:4.1
+// swift-tools-version:5.7
 import PackageDescription
 
 let package = Package(
     name: "Bootstrap",
+    platforms: [
+        .macOS(.v13)
+    ],
     products: [
         .library(name: "Bootstrap", targets: ["Bootstrap"])
     ],
     dependencies: [
-        .package(url: "https://github.com/nodes-vapor/sugar.git", from: "4.0.0"),
-        .package(url: "https://github.com/vapor/leaf.git", from: "3.0.0"),
-        .package(url: "https://github.com/vapor/vapor.git", from: "3.0.0"),
+        .package(url: "https://github.com/vapor/leaf.git", from: "4.0.0"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
     ],
     targets: [
-        .target(name: "Bootstrap", dependencies: ["Leaf", "Vapor", "Sugar"]),
+        .target(
+            name: "Bootstrap", 
+            dependencies: [
+                .product(name: "Leaf", package: "leaf"),
+                .product(name: "Vapor", package: "vapor")
+            ]),
         .testTarget(name: "BootstrapTests", dependencies: ["Bootstrap"])
     ]
 )
