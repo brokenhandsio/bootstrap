@@ -1,68 +1,61 @@
 import Leaf
-import TemplateKit
 
 /// Bootstrap Alert Tag
-public final class AlertTag: TagRenderer {
-    public func render(tag: TagContext) throws -> Future<TemplateData> {
+public struct AlertTag: UnsafeUnescapedLeafTag {
+    public init() { }
+    
+    public func render(_ ctx: LeafContext) throws -> LeafData {
         var style = ColorKeys.primary.rawValue
         var classes: String?
         var attributes: String?
-
-        if tag.parameters.count > 0 {
-            guard let param = tag.parameters[0].string else {
-                throw tag.error(
-                    reason: "Wrong type given (expected a string): \(type(of: tag.parameters[0]))"
-                )
+        
+        // Check if the style is provided
+        if ctx.parameters.count > 0 {
+            guard let param = ctx.parameters[0].string else {
+                throw "Bootstrap: wrong type given (expected a string): \(type(of: ctx.parameters[0]))"
             }
 
-            if param.count > 0 {
+            if !param.isEmpty {
                 style = param
             }
         }
+        
+        guard let parsedStyle = ColorKeys(rawValue: style) else {
+            throw "Bootstrap: wrong style argument given: \(style)"
+        }
 
-        if tag.parameters.count > 1 {
-            guard let param = tag.parameters[1].string else {
-                throw tag.error(
-                    reason: "Wrong type given (expected a string): \(type(of: tag.parameters[1]))"
-                )
+        // Check if additional classes are provided
+        if ctx.parameters.count > 1 {
+            guard let param = ctx.parameters[1].string else {
+                throw "Bootstrap: wrong additional class type given (expected a string): \(type(of: ctx.parameters[1]))"
             }
 
-            if param.count > 0 {
+            if !param.isEmpty {
                 classes = param
             }
         }
 
-        if tag.parameters.count > 2 {
-            guard let param = tag.parameters[2].string else {
-                throw tag.error(
-                    reason: "Wrong type given (expected a string): \(type(of: tag.parameters[2]))"
-                )
+        // Check if additional attributes are provided
+        if ctx.parameters.count > 2 {
+            guard let param = ctx.parameters[2].string else {
+                throw "Bootstrap: wrong additional attribute type given (expected a string): \(type(of: ctx.parameters[2]))"
             }
 
-            if param.count > 0 {
+            if !param.isEmpty {
                 attributes = param
             }
         }
-
-        guard let parsedStyle = ColorKeys(rawValue: style) else {
-            throw tag.error(reason: "Wrong argument given: \(style)")
+        
+        let body = try ctx.getRawTagBody()
+        
+        // Build and return the newly created alrrt
+        var alert = "<div class=\"alert alert-\(parsedStyle)"
+        if let classes {
+            alert += " \(classes)"
         }
-
-        guard let body = tag.body else {
-            throw tag.error(reason: "Wrong body given: \(String(describing: tag.body))")
-        }
-
-        return tag.serializer.serialize(ast: body).map(to: TemplateData.self) { er in
-            let body = String(data: er.data, encoding: .utf8) ?? ""
-
-            var alert = "<div class=\"alert alert-\(parsedStyle)"
-            if let classes = classes {
-                alert += " \(classes)"
-            }
-
-            alert += "\" \(attributes ?? "") role='alert'>\(body)</div>"
-
-            return .string(alert)
-        }
+        
+        alert += "\" \(attributes ?? "") role='alert'>\(body)</div>"
+        
+        return .string(alert)
     }
 }
