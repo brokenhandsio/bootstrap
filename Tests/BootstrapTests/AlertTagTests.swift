@@ -4,44 +4,30 @@ import XCTest
 
 final class AlertTagTests: XCTestCase {
     var alertTag: AlertTag!
+    let tagName = "alert"
 
     override func setUpWithError() throws {
         alertTag = AlertTag()
     }
-    
-    // MARK: Helpers
-    
-    private func generateAST(name: String, template: String) throws -> [Syntax] {
-        var lexer = LeafLexer(name: name, template: template)
-        let tokens = try lexer.lex()
-        var parser = LeafParser(name: name, tokens: tokens)
-        return try parser.parse()
-    }
-
-    private func render(ast: [Syntax], context: [String: LeafData]) throws -> String {
-        var serializer = LeafSerializer(ast: ast, tags: ["alert": alertTag], ignoreUnfoundImports: true)
-        let view = try serializer.serialize(context: context)
-        return view.getString(at: view.readerIndex, length: view.readableBytes) ?? ""
-    }
-
-    // MARK: Tests
 
     func testDefaultAlert() throws {
         let template = "#alert: Hello, world! #endalert"
         let expected = "<div class=\"alert alert-primary\" role=\"alert\">Hello, world!</div>"
-        let result = try render(ast: generateAST(name: "alertTests", template: template), context: [:])
-        XCTAssertEqual(result, expected)
+        try XCTAssertEqual(
+            render(template, tags: [tagName: alertTag]),
+            expected
+        )
     }
     
     func testWarningAlertWithStyle() throws {
         let template = "#alert(style): Hello, world! #endalert"
         let style = "warning"
         let expected = "<div class=\"alert alert-warning\" role=\"alert\">Hello, world!</div>"
-        let result = try render(
-            ast: generateAST(name: "alertTests", template: template),
-            context: ["style": .string(style)]
+        let context: [String: LeafData] = ["style": LeafData.string(style)]
+        try XCTAssertEqual(
+            render(template, context, tags: [tagName: alertTag]),
+            expected
         )
-        XCTAssertEqual(result, expected)
     }
     
     func testWarningAlertWithAdditionalClass() throws {
@@ -49,11 +35,11 @@ final class AlertTagTests: XCTestCase {
         let style = "warning"
         let classes = "my-class"
         let expected = "<div class=\"alert alert-warning my-class\" role=\"alert\">Hello, world!</div>"
-        let result = try render(
-            ast: generateAST(name: "alertTests", template: template),
-            context: ["style": .string(style), "classes": .string(classes)]
+        let context: [String: LeafData] = ["style": .string(style), "classes": .string(classes)]
+        try XCTAssertEqual(
+            render(template, context, tags: [tagName: alertTag]),
+            expected
         )
-        XCTAssertEqual(result, expected)
     }
 
     func testWarningAlertWithAdditionalClassesAndAttributes() throws {
@@ -62,20 +48,19 @@ final class AlertTagTests: XCTestCase {
         let classes = "my-class"
         let attributes = "data-foo=\"bar\" data-baz=\"qux\""
         let expected = "<div class=\"alert alert-warning my-class\" data-foo=\"bar\" data-baz=\"qux\" role=\"alert\">Hello, world!</div>"
-        let result = try render(
-            ast: generateAST(name: "alertTests", template: template),
-            context: ["style": .string(style), "classes": .string(classes), "attributes": .string(attributes)]
+        let context: [String: LeafData] = ["style": .string(style), "classes": .string(classes), "attributes": .string(attributes)]
+        try XCTAssertEqual(
+            render(template, context, tags: [tagName: alertTag]),
+            expected
         )
-        XCTAssertEqual(result, expected)
     }
 
     func testAlertWithoutBody() throws {
         let template = "#alert: #endalert"
         let expected = "<div class=\"alert alert-primary\" role=\"alert\"></div>"
-        let result = try render(
-            ast: generateAST(name: "alertTests", template: template),
-            context: [:]
+        try XCTAssertEqual(
+            render(template, tags: [tagName: alertTag]),
+            expected
         )
-        XCTAssertEqual(result, expected)
     }
 }
