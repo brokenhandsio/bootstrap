@@ -7,5 +7,6 @@ extension Application.Leaf {
         self.tags["bsBadge"] = BadgeTag()
         self.tags["bsButton"] = ButtonTag()
         self.tags["bsInput"] = InputTag()
+        self.tags["bsFileInput"] = FormFileTag()
     }
 }
