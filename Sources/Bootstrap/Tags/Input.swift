@@ -11,7 +11,7 @@ public struct InputTag: UnsafeUnescapedLeafTag {
     }
 
     public func render(_ ctx: LeafContext) throws -> LeafData {
-        try ctx.requireNoBody()
+//        try ctx.requireNoBody()
         let (inputType, classes, attributes) = try parseParameters(ctx)
         
         guard InputTypeKeys(rawValue: inputType) != nil else {
