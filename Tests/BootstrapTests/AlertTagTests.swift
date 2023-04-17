@@ -2,7 +2,7 @@ import Bootstrap
 @testable import LeafKit
 import XCTest
 
-final class BootstrapTests: XCTestCase {
+final class AlertTagTests: XCTestCase {
     var alertTag: AlertTag!
 
     override func setUpWithError() throws {
@@ -72,7 +72,10 @@ final class BootstrapTests: XCTestCase {
     func testAlertWithoutBody() throws {
         let template = "#alert: #endalert"
         let expected = "<div class=\"alert alert-primary\" role=\"alert\"></div>"
-        let result = try render(ast: generateAST(name: "alertTests", template: template), context: [:])
+        let result = try render(
+            ast: generateAST(name: "alertTests", template: template),
+            context: [:]
+        )
         XCTAssertEqual(result, expected)
     }
 }
