@@ -5,5 +5,6 @@ extension Application.Leaf {
     public func useBootstrapTags() {
         self.tags["bsAlert"] = AlertTag()
         self.tags["bsBadge"] = BadgeTag()
+        self.tags["bsButton"] = ButtonTag()
     }
 }
