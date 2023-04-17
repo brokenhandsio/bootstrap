@@ -1,7 +1,7 @@
 import Leaf
 
 extension LeafContext {
-    /// Creates a string from the raw body of the tag
+    /// Returns the raw body of the tag.
     func getRawTagBody() throws -> String {
         try self.requireBody().compactMap { element in
             guard case .raw(let byteBuffer) = element else {
