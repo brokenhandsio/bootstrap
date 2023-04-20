@@ -8,5 +8,6 @@ extension Application.Leaf {
         self.tags["bsButton"] = ButtonTag()
         self.tags["bsInput"] = InputTag()
         self.tags["bsFileInput"] = FormFileTag()
+        self.tags["bsTextArea"] = TextAreaTag()
     }
 }

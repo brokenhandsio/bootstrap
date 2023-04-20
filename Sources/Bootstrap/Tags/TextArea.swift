@@ -1,33 +1,32 @@
 import Leaf
-import Sugar
-import TemplateKit
 
-public final class TextAreaTag: TagRenderer {
-    private static let paramCount: Int = 3
+public struct TextAreaTag: UnsafeUnescapedLeafTag {
+    public func render(_ ctx: LeafContext) throws -> LeafData {
+//        try ctx.requireNoBody()
+        
+        let (classes, attributes, value) = try parseParameters(ctx)
 
-    public func render(tag: TagContext) throws -> Future<TemplateData> {
-        try tag.requireNoBody()
-        try tag.requireParameterCount(upTo: TextAreaTag.paramCount)
+        var textArea = "<textarea class=\"form-control"
 
-        var classes = "form-control"
-        var attributes = "rows='3'"
-        var value = ""
-
-        for index in 0...2 {
-            if
-                let param = tag.parameters[safe: index]?.string,
-                !param.isEmpty
-            {
-                switch index {
-                case 0: classes = param
-                case 1: attributes = param
-                case 2: value = param
-                default: break
-                }
-            }
+        if let classes {
+            textArea += " \(classes)"
         }
 
-        let html = "<textarea class='\(classes)' \(attributes)>\(value)</textarea>"
-        return tag.future(.string(html))
+        textArea += "\" rows=\"3\""
+
+        if let attributes {
+            textArea += " \(attributes)"
+        }
+
+        textArea += ">\(value ?? "")</textarea>"
+
+        return .string(textArea)
+    }
+
+    func parseParameters(_ ctx: LeafContext) throws -> (classes: String?, attributes: String?, value: String?) {
+        let classes = try ctx.parse(index: 0, type: "classes")
+        let attributes = try ctx.parse(index: 1, type: "attributes")
+        let value = try ctx.parse(index: 2, type: "value")
+        return (classes, attributes, value)
     }
 }
