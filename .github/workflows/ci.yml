@@ -12,7 +12,7 @@ on:
 jobs:
   build:
     container:
-      image: swift:5.6
+      image: swift:5.7
     runs-on: ubuntu-latest
 
     steps:
