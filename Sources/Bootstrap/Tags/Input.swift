@@ -1,42 +1,48 @@
 import Leaf
-import Sugar
-import TemplateKit
 
-public final class InputTag: TagRenderer {
-    enum Keys: String {
+public struct InputTag: UnsafeUnescapedLeafTag {
+    public init() { }
+
+    enum InputTypeKeys: String {
         case text
         case email
         case password
         case hidden
     }
 
-    public func render(tag: TagContext) throws -> Future<TemplateData> {
-        var inputType = Keys.text.rawValue
-        var classes = ""
-        var attributes = ""
-
-        try tag.requireNoBody()
-
-        for index in 0...2 {
-            if
-                let param = tag.parameters[safe: index]?.string,
-                !param.isEmpty
-            {
-                switch index {
-                case 0: inputType = param
-                case 1: classes = param
-                case 2: attributes = param
-                default: break
-                }
-            }
+    public func render(_ ctx: LeafContext) throws -> LeafData {
+//        try ctx.requireNoBody()
+        let (inputType, classes, attributes) = try parseParameters(ctx)
+        
+        guard InputTypeKeys(rawValue: inputType) != nil else {
+            throw "Wrong argument given: \(inputType)"
         }
 
-        guard let parsedType = Keys(rawValue: inputType) else {
-            throw tag.error(reason: "Wrong argument given: \(inputType)")
+        var input = "<input type=\"\(inputType)\" class=\"form-control"
+
+        if let classes {
+            input += " \(classes)"
         }
 
-        let c = "form-control \(classes)"
-        let button = "<input type='\(parsedType)' class='\(c)' \(attributes)>"
-        return tag.future(.string(button))
+        input += "\""
+
+        if let attributes {
+            input += " \(attributes)"
+        }
+
+        input += ">"
+
+        return .string(input)
+    }
+    
+    private func parseParameters(_ ctx: LeafContext) throws -> (input: String, classes: String?, attributes: String?) {
+        let input = try ctx.parse(index: 0, type: "input")
+        let classes = try ctx.parse(index: 1, type: "classes")
+        let attributes = try ctx.parse(index: 2, type: "attributes")
+        
+        guard let input else {
+            return (InputTypeKeys.text.rawValue, classes, attributes)
+        }
+        return (input, classes, attributes)
     }
 }

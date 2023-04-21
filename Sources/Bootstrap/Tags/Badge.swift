@@ -1,39 +1,43 @@
 import Leaf
-import Sugar
-import TemplateKit
 
-public final class BadgeTag: TagRenderer {
-    public func render(tag: TagContext) throws -> Future<TemplateData> {
-        let body = try tag.requireBody()
-
-        var style = ColorKeys.primary.rawValue
-        var classes = ""
-        var attributes = ""
-
-        for index in 0...2 {
-            if
-                let param = tag.parameters[safe: index]?.string,
-                !param.isEmpty
-            {
-                switch index {
-                case 0: style = param
-                case 1: classes = param
-                case 2: attributes = param
-                default: break
-                }
-            }
+/// Bootstrap Badge class
+/// See https://getbootstrap.com/docs/5.2/components/badge/
+public struct BadgeTag: UnsafeUnescapedLeafTag {
+    public init() { }
+    
+    public func render(_ ctx: LeafContext) throws -> LeafData {
+        let (style, classes, attributes) = try parseParameters(ctx)
+        
+        guard ColorKeys(rawValue: style) != nil else {
+            throw "Bootstrap: wrong style argument given: \(style)"
         }
-
-        guard let parsedStyle = ColorKeys(rawValue: style) else {
-            throw tag.error(reason: "Wrong argument given: \(style)")
+        
+        let body = try ctx.getRawTagBody()
+        
+        var badge = "<span class=\"badge badge-\(style)"
+        if let classes {
+            badge += " \(classes)"
         }
-
-        return tag.serializer.serialize(ast: body).map(to: TemplateData.self) { body in
-            let c = "badge badge-\(parsedStyle) \(classes)"
-            let b = String(data: body.data, encoding: .utf8) ?? ""
-
-            let badge = "<span class='\(c)' \(attributes)>\(b)</span>"
-            return .string(badge)
+        
+        badge += "\""
+        
+        if let attributes {
+            badge += " \(attributes)"
         }
+        
+        badge += ">\(body)</span>"
+        
+        return .string(badge)
+    }
+    
+    private func parseParameters(_ ctx: LeafContext) throws -> (style: String, classes: String?, attributes: String?) {
+        let style = try ctx.parse(index: 0, type: "style")
+        let classes = try ctx.parse(index: 1, type: "classes")
+        let attributes = try ctx.parse(index: 2, type: "attributes")
+        
+        guard let style else {
+            return (ColorKeys.primary.rawValue, classes, attributes)
+        }
+        return (style, classes, attributes)
     }
 }

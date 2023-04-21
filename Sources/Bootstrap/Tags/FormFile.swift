@@ -1,30 +1,33 @@
 import Leaf
-import Sugar
-import TemplateKit
 
-public final class FormFile: TagRenderer {
+public struct FormFileTag: UnsafeUnescapedLeafTag {
+    public init() { }
+    
+    public func render(_ ctx: LeafContext) throws -> LeafData {
+//        try ctx.requireNoBody()
 
-  public func render(tag: TagContext) throws -> Future<TemplateData> {
-    var classes = ""
-    var attributes = ""
+        let (classes, attributes) = try parseParameters(ctx)
 
-    try tag.requireNoBody()
+        var input = "<input type=\"file\" class=\"form-control"
 
-    for index in 0...1 {
-      if
-        let param = tag.parameters[safe: index]?.string,
-        !param.isEmpty
-      {
-        switch index {
-        case 0: classes = param
-        case 1: attributes = param
-        default: ()
+        if let classes {
+            input += " \(classes)"
         }
-      }
+
+        input += "\""
+
+        if let attributes {
+            input += " \(attributes)"
+        }
+
+        input += ">"
+
+        return .string(input)
     }
 
-    let c = "form-control \(classes)"
-    let button = "<input type='file' class='\(c)' \(attributes)>"
-    return Future.map(on: tag) { return .string(button) }
-  }
+    private func parseParameters(_ ctx: LeafContext) throws -> (classes: String?, attributes: String?) {
+        let classes = try ctx.parse(index: 0, type: "classes")
+        let attributes = try ctx.parse(index: 1, type: "attributes")
+        return (classes, attributes)
+    }
 }

@@ -1,68 +1,43 @@
 import Leaf
-import TemplateKit
 
-/// Bootstrap Alert Tag
-public final class AlertTag: TagRenderer {
-    public func render(tag: TagContext) throws -> Future<TemplateData> {
-        var style = ColorKeys.primary.rawValue
-        var classes: String?
-        var attributes: String?
-
-        if tag.parameters.count > 0 {
-            guard let param = tag.parameters[0].string else {
-                throw tag.error(
-                    reason: "Wrong type given (expected a string): \(type(of: tag.parameters[0]))"
-                )
-            }
-
-            if param.count > 0 {
-                style = param
-            }
+/// Bootstrap Alert class
+/// See https://getbootstrap.com/docs/5.2/components/alerts/
+public struct AlertTag: UnsafeUnescapedLeafTag {
+    public init() { }
+    
+    public func render(_ ctx: LeafContext) throws -> LeafData {
+        let (style, classes, attributes) = try parseParameters(ctx)
+        
+        guard ColorKeys(rawValue: style) != nil else {
+            throw "Bootstrap: wrong style argument given: \(style)"
         }
 
-        if tag.parameters.count > 1 {
-            guard let param = tag.parameters[1].string else {
-                throw tag.error(
-                    reason: "Wrong type given (expected a string): \(type(of: tag.parameters[1]))"
-                )
-            }
-
-            if param.count > 0 {
-                classes = param
-            }
+        let body = try ctx.getRawTagBody()
+        
+        var alert = "<div class=\"alert alert-\(style)"
+        if let classes {
+            alert += " \(classes)"
         }
-
-        if tag.parameters.count > 2 {
-            guard let param = tag.parameters[2].string else {
-                throw tag.error(
-                    reason: "Wrong type given (expected a string): \(type(of: tag.parameters[2]))"
-                )
-            }
-
-            if param.count > 0 {
-                attributes = param
-            }
+        
+        alert += "\""
+        
+        if let attributes {
+            alert += " \(attributes)"
         }
-
-        guard let parsedStyle = ColorKeys(rawValue: style) else {
-            throw tag.error(reason: "Wrong argument given: \(style)")
+        
+        alert += " role=\"alert\">\(body)</div>"
+        
+        return .string(alert)
+    }
+    
+    private func parseParameters(_ ctx: LeafContext) throws -> (style: String, classes: String?, attributes: String?) {
+        let style = try ctx.parse(index: 0, type: "style")
+        let classes = try ctx.parse(index: 1, type: "classes")
+        let attributes = try ctx.parse(index: 2, type: "attributes")
+        
+        guard let style else {
+            return (ColorKeys.primary.rawValue, classes, attributes)
         }
-
-        guard let body = tag.body else {
-            throw tag.error(reason: "Wrong body given: \(String(describing: tag.body))")
-        }
-
-        return tag.serializer.serialize(ast: body).map(to: TemplateData.self) { er in
-            let body = String(data: er.data, encoding: .utf8) ?? ""
-
-            var alert = "<div class=\"alert alert-\(parsedStyle)"
-            if let classes = classes {
-                alert += " \(classes)"
-            }
-
-            alert += "\" \(attributes ?? "") role='alert'>\(body)</div>"
-
-            return .string(alert)
-        }
+        return (style, classes, attributes)
     }
 }

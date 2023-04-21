@@ -1,44 +1,50 @@
 import Leaf
-import Sugar
-import TemplateKit
 
-public final class ButtonTag: TagRenderer {
+/// Bootstrap Button class
+/// See https://getbootstrap.com/docs/5.2/components/buttons/
+public struct ButtonTag: UnsafeUnescapedLeafTag {
+    public init() { }
+
     /// A button style can be any of `ColorKeys` or "link".
     public enum Keys: String {
         case link
     }
 
-    public func render(tag: TagContext) throws -> Future<TemplateData> {
-        let body = try tag.requireBody()
+    public func render(_ ctx: LeafContext) throws -> LeafData {
+        let (style, classes, attributes) = try parseParameters(ctx)
 
-        var style = ColorKeys.primary.rawValue
-        var classes = ""
-        var attributes = ""
-
-        for index in 0...2 {
-            if
-                let param = tag.parameters[safe: index]?.string,
-                !param.isEmpty
-            {
-                switch index {
-                case 0: style = param
-                case 1: classes = param
-                case 2: attributes = param
-                default: break
-                }
-            }
+        guard
+            ColorKeys(rawValue: style) != nil || Keys(rawValue: style) != nil
+        else {
+            throw "Bootstrap: wrong style argument given: \(style)"
         }
 
-        guard ColorKeys(rawValue: style) != nil || Keys(rawValue: style) != nil else {
-            throw tag.error(reason: "Wrong argument given: \(style)")
+        let body = try ctx.getRawTagBody()
+
+        var button = "<button class=\"btn btn-\(style)"
+        if let classes {
+            button += " \(classes)"
         }
 
-        return tag.serializer.serialize(ast: body).map(to: TemplateData.self) { body in
-            let c = "btn btn-\(style) \(classes)"
-            let b = String(data: body.data, encoding: .utf8) ?? ""
+        button += "\""
 
-            let button = "<button class='\(c)' \(attributes)>\(b)</button>"
-            return .string(button)
+        if let attributes {
+            button += " \(attributes)"
         }
+
+        button += ">\(body)</button>"
+
+        return .string(button)
+    }
+    
+    private func parseParameters(_ ctx: LeafContext) throws -> (style: String, classes: String?, attributes: String?) {
+        let style = try ctx.parse(index: 0, type: "style")
+        let classes = try ctx.parse(index: 1, type: "classes")
+        let attributes = try ctx.parse(index: 2, type: "attributes")
+        
+        guard let style else {
+            return (ColorKeys.primary.rawValue, classes, attributes)
+        }
+        return (style, classes, attributes)
     }
 }

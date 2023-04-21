@@ -1,30 +1,33 @@
 import Leaf
-import Sugar
-import TemplateKit
 
-public final class FormCheckbox: TagRenderer {
+public struct FormCheckboxTag: UnsafeUnescapedLeafTag {
+    public init() { }
+    
+    public func render(_ ctx: LeafContext) throws -> LeafData {
+        // try ctx.requireNoBody()
 
-  public func render(tag: TagContext) throws -> Future<TemplateData> {
-    var classes = ""
-    var attributes = ""
+        let (classes, attributes) = try parseParameters(ctx)
 
-    try tag.requireNoBody()
+        var checkbox = "<input type=\"checkbox\" class=\"form-control"
 
-    for index in 0...1 {
-      if
-        let param = tag.parameters[safe: index]?.string,
-        !param.isEmpty
-      {
-        switch index {
-        case 0: classes = param
-        case 1: attributes = param
-        default: ()
+        if let classes {
+            checkbox += " \(classes)"
         }
-      }
-    }
 
-    let c = "form-control \(classes)"
-    let button = "<input type='checkbox' class='\(c)' \(attributes)>"
-    return Future.map(on: tag) { return .string(button) }
-  }
+        checkbox += "\""
+
+        if let attributes {
+            checkbox += " \(attributes)"
+        }
+
+        checkbox += ">"
+
+        return .string(checkbox)
+    }
+    
+    private func parseParameters(_ ctx: LeafContext) throws -> (classes: String?, attributes: String?) {
+        let classes = try ctx.parse(index: 0, type: "classes")
+        let attributes = try ctx.parse(index: 1, type: "attributes")
+        return (classes, attributes)
+    }
 }
