@@ -84,5 +84,7 @@ app.leaf.useBootstrapTags()
 ### Textarea
 
 ```
-#bsTextArea(classExtras?, attributes?, value?)
+#bsTextArea(classExtras?, attributes?):
+    some textarea text
+#endbsTextArea
 ```
