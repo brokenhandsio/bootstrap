@@ -9,5 +9,6 @@ extension Application.Leaf {
         self.tags["bsInput"] = InputTag()
         self.tags["bsFileInput"] = FormFileTag()
         self.tags["bsTextArea"] = TextAreaTag()
+        self.tags["bsCheckbox"] = FormCheckboxTag()
     }
 }
