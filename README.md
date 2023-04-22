@@ -2,7 +2,7 @@
 
 [![Swift Version](https://img.shields.io/badge/Swift-5.7-brightgreen.svg)](http://swift.org)
 [![Vapor Version](https://img.shields.io/badge/Vapor-4-30B6FC.svg)](http://vapor.codes)
-[![Build Status](https://github.com/brokenhandsio/bootstrap/workflows/CI/badge.svg?branch=vapor-4)](https://github.com/brokenhandsio/bootstrap/actions)
+[![Build Status](https://github.com/brokenhandsio/bootstrap/workflows/CI/badge.svg?branch=master)](https://github.com/brokenhandsio/bootstrap/actions)
 [![codecov](https://codecov.io/gh/nodes-vapor/bootstrap/branch/master/graph/badge.svg)](https://codecov.io/gh/nodes-vapor/bootstrap)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/nodes-vapor/bootstrap/master/LICENSE)
 
