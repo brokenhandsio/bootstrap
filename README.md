@@ -14,7 +14,7 @@ This package wraps Bootstrap elements into convenient Leaf-Tags.
 Add `Bootstrap` to the package dependencies (in your `Package.swift` file):
 
 ```swift
-.package(url: "https://github.com/nodes-vapor/bootstrap.git", from: "5.0.0")
+.package(url: "https://github.com/nodes-vapor/bootstrap.git", from: "1.0.0-beta")
 ```
 
 as well as to your target:
@@ -36,7 +36,7 @@ import Leaf
 
 In order to render the Bootstrap elements, you will need to add the Bootstrap Leaf tags:
 
-```swift 
+```swift
 app.leaf.useBootstrapTags()
 ```
 
@@ -45,11 +45,10 @@ app.leaf.useBootstrapTags()
 - [Alert](#alert)
 - [Badge](#badge)
 - [Button](#button)
-- [Button Group](#button-group)
-- [Button Toolbar](#button-toolbar)
 - [Input](#input)
-- [Breadcrumb](#breadcrumb)
 - [Textarea](#textarea)
+- [Checkbox](#checkbox)
+- [File Input](#file-input)
 
 ### Alert
 
@@ -88,3 +87,16 @@ app.leaf.useBootstrapTags()
     some textarea text
 #endbsTextArea
 ```
+
+### Checkbox
+
+```
+#bsCheckbox(classExtras?, attributes?)
+```
+
+### File Input
+
+```
+#bsFileInput(classExtras?, attributes?)
+```
+
