@@ -11,5 +11,6 @@ extension Application.Leaf {
         self.tags["bsButtonGroup"] = ButtonGroupTag()
         self.tags["bsFormCheckbox"] = FormCheckboxTag()
         self.tags["bsTextArea"] = TextAreaTag()
+        self.tags["bsCheckbox"] = FormCheckboxTag()
     }
 }
