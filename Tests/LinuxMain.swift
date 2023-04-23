@@ -1,6 +1,6 @@
 import XCTest
 
-import BootstrapTests
+import LeafBootstrapTests
 
 var tests = [XCTestCaseEntry]()
 tests += BootstrapTests.allTests()

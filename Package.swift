@@ -2,12 +2,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "bootstrap",
+    name: "leaf-bootstrap",
     platforms: [
         .macOS(.v13)
     ],
     products: [
-        .library(name: "Bootstrap", targets: ["Bootstrap"])
+        .library(name: "LeafBootstrap", targets: ["LeafBootstrap"]),
     ],
     dependencies: [
         .package(url: "https://github.com/vapor/leaf.git", from: "4.0.0"),
@@ -15,15 +15,15 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "Bootstrap",
+            name: "LeafBootstrap",
             dependencies: [
                 .product(name: "Leaf", package: "leaf"),
                 .product(name: "Vapor", package: "vapor")
             ]),
         .testTarget(
-            name: "BootstrapTests",
+            name: "LeafBootstrapTests",
             dependencies: [
-                .target(name: "Bootstrap"),
+                .target(name: "LeafBootstrap"),
                 .product(name: "XCTVapor", package: "vapor")
             ]
         )
