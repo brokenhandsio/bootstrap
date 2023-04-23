@@ -25,7 +25,7 @@ as well as to your target:
 
 ## Getting started 🚀
 
-First import Bootstrap and Leaf inside your `configure.swift`
+First import LeafBootstrap and Leaf inside your `configure.swift`
 
 ```swift
 import LeafBootstrap
